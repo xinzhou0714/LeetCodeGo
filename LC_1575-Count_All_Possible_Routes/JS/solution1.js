@@ -16,21 +16,27 @@ var countRoutes = function (locations, start, finish, fuel) {
   const MOD = 10 ** 9 + 7;
 
   const accum = (rest, current) => {
+    /* 有缓存的话使用缓存结果*/
     if (cache[rest][current] !== null) {
       return cache[rest][current];
     }
 
+    /*先初始化为0，当前位置去目标地最小油耗大于剩余油量 则返回0*/
     cache[rest][current] = 0;
     if (Math.abs(locations[current] - locations[finish]) > rest) return 0;
 
+    /*尝试向邻居节点移动*/
     locations.forEach((value, index) => {
       if (current !== index) {
         const cost = Math.abs(locations[current] - locations[index]);
+        /*油耗小于油量就是可移动的*/
         if (cost <= rest) {
+          /*累加邻居节点去终点的方案数目*/
           cache[rest][current] += accum(rest - cost, index) % MOD;
         }
       }
     });
+    /*到达终点不移动也是一种方案*/
     if (current === finish) {
       cache[rest][current] += 1;
     }
